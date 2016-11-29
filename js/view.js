@@ -34,13 +34,18 @@ let renderMovies = (movies, location) => {
       console.log("movies.Search:", movies.Search);
       let content = "";
       for (let i = 0; i < movies.Search.length; i++) {
+        if (movies.Search[i].Poster === "N/A"){
+         let content = "";
+        }
+        else{
         content += `
-          <div id="movie-${movies.Search[i].imdbID}" class="movie col-sm-4 card">
-            <a id="delete-${movies.Search[i].imdbID}" href="#">Delete Card</a><br/>
+          <div id="${movies.Search[i].imdbID}" class="movie col-sm-4 card">
+            <a class="deleteButton" id="delete-${movies.Search[i].imdbID}" href="#">Delete Card</a><br/>
             <img class="movieImage" src="${movies.Search[i].Poster}"/><br/>
-            <a id="add-${movies.Search[i].imdbID}">Add to Watchlist</a>
+            <button type="button" class="adder" id="add-${movies.Search[i].imdbID}">Add to Watchlist</a>
           </div>
         `;
+      }
 
         // Event Listeners for each add button
         /*jshint loopfunc: true */
@@ -160,7 +165,9 @@ let loadPage = () => "I load a page";
 
 
 // hideMovie(movieID)
-let hideMovie = () => "I hide a movie";
+function hideMovie(movie){
+  $(movie).remove();
+}
 
 // Testing
 let viewTestFunction = () => "I was created in the View";

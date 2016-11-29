@@ -44,7 +44,7 @@ function deleteMovie(movieId) {
 	return new Promise(function(resolve, reject) {
 		$.ajax ({
 			url: `https://scrappy-eb326.firebaseio.com/movies/${movieId}.json`,
-			method: "DELETE"
+			type: "DELETE"
 		}).done(function() {
 			resolve();
 		});
