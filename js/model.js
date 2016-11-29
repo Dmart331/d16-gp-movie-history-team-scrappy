@@ -35,25 +35,25 @@ let compare = (omdb, fb) => {
   return searchResultAll;
 };
 
-let checkLocation = function (str) {
-  switch (str){
-    case 'search':
-      searchAll(searchString);
-      break;
-    case 'untracked':
-      showUntracked();
-      break;
-    case 'unwatched':
-      showUnwatched();
-      break;
-    case 'watched':
-      showWatched();
-      break;
-    case 'favorites':
-      showFavorites();
-      break;
-  }
-};
+// let checkLocation = function (str) {
+//   switch (str){
+//     case 'search':
+//       searchAll(searchString);
+//       break;
+//     case 'untracked':
+//       showUntracked();
+//       break;
+//     case 'unwatched':
+//       showUnwatched();
+//       break;
+//     case 'watched':
+//       showWatched();
+//       break;
+//     case 'favorites':
+//       showFavorites();
+//       break;
+//   }
+// };
 
 let userLocation = function(str){
   location = str;
@@ -109,11 +109,9 @@ console.log("searchAll called omdb with: ", string);
     if (loggedUser()){
       // searchResultTracked = Firebase.searchFirebase(string);
       for (let i=0; i<userMovies.Search.length; i++){
-        for (let title in userMovies.Search[i]){
-          if (userMovies.Search[i].title.toLowerCase().contains(searchString)){
-            searchResultTracked.Search.push(userMovies.Search[i]);
-          }
-        }
+        // for (let title in userMovies.Search[i]){
+          
+        // }
       }
       searchResultAll = compare(resultOMDb, searchResultTracked);
     } else {
@@ -145,8 +143,9 @@ let showUnwatched = () => {
 // showWatched() will call getWatched(true), then call renderMovies(object, watched)
 let showWatched = () => {
   location = 'watched';
+  getData
   let watched = {Search: []};
-  userMovies.Search.forEach(function (el, ind, arr) {
+  userMovies.Search.forEach(function (el) {
     if (el.watched){
       watched.Search.push(el);
     }
@@ -178,13 +177,14 @@ let addMovie = (movieId) => {
     "Watched" : false,
     "Rating" : 0,
     "Poster" : movieData.Poster,
-    "imdbID" : movieData.imdbID
+    "imdbID" : movieData.imdbID,
+    "uid": User.getUser()
     };
     Firebase.addMovie(fullMovie);
   });
   Render.hideMovie(movieId);
-  landingPage(loggedUser());
-  checkLocation(location);
+  // landingPage(loggedUser());
+  // checkLocation(location);
   // Render.renderCard(fullMovie);
 };
 

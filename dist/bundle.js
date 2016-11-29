@@ -50,6 +50,7 @@
 	let fav = __webpack_require__(1);
 	let sass = __webpack_require__(2);
 	let model = __webpack_require__(6);
+	let view = __webpack_require__(115);
 
 	        // Input Elements
 	let navSearch   = $("#nav-Search"), //keypress event
@@ -61,11 +62,11 @@
 	    showWatched    = $("#show-watched"),
 	    showFavorites  = $("#show-favorites");
 	    console.log("it's working");
-
+	           
 	navLogIn.click(function(event) {
 	 console.log("you clicked the login button",event );
 	 model.logIn();
-
+	 
 	 });
 	navLogOut.click(function(event) {
 	console.log("you clicked the logout button",event );
@@ -82,9 +83,21 @@
 	model.searchAll(searchResult);
 	navSearch.val('');
 
-	}
+	}   
 	});
 
+	$(document).on("click" , ".adder" , function(event){
+		if(event.target.className === "adder")
+			console.log("Drewwwwww" , event.target.parentElement.id);
+			model.addMovie(event.target.parentElement.id);
+			$(event.target.closest('div')).hide();
+	});
+
+	$(document).on("click" , ".deleteButton" , function(event){
+		if(event.target.className === "deleteButton")
+			console.log("Drewwwwww" , event.target.parentElement.id);
+			model.deleteMovie(event.target.parentElement.id);
+	});
 
 	//listening to 4 toggle options
 	showUntracked.click(function(event) {
@@ -93,7 +106,7 @@
 	});
 
 	showUnwatched.click(function(event) {
-	console.log("you clicked show unwatched",event );
+	console.log("you clicked show unwatched", event );
 
 	model.showUnwatched();
 	});
@@ -110,8 +123,9 @@
 	});
 
 
-	// testing
-	model.addMovie("tt0072890");
+
+
+
 
 /***/ },
 /* 1 */
@@ -167,7 +181,7 @@
 	exports.push([module.id, "@import url(/node_modules/bootstrap/dist/css/bootstrap.min.css);", ""]);
 
 	// module
-	exports.push([module.id, "body {\n  background: white; }\n\n.row {\n  margin: 0 auto; }\n\n#film {\n  width: 75px; }\n\n#home {\n  padding-top: 30px; }\n\n#home h1 {\n  padding-top: 30px; }\n\n.movieImage {\n  max-width: 200px;\n  max-height: 250px; }\n\n.movie {\n  padding: 20px 0; }\n", ""]);
+	exports.push([module.id, "body {\n  background: white; }\n\n.row {\n  margin: 0 auto; }\n\n#film {\n  width: 75px; }\n\n#home {\n  padding-top: 30px; }\n\n#home h1 {\n  padding-top: 30px; }\n\n.movieImage {\n  max-width: 200px;\n  max-height: 250px; }\n", ""]);
 
 	// exports
 
@@ -521,25 +535,25 @@
 	  return searchResultAll;
 	};
 
-	let checkLocation = function (str) {
-	  switch (str){
-	    case 'search':
-	      searchAll(searchString);
-	      break;
-	    case 'untracked':
-	      showUntracked();
-	      break;
-	    case 'unwatched':
-	      showUnwatched();
-	      break;
-	    case 'watched':
-	      showWatched();
-	      break;
-	    case 'favorites':
-	      showFavorites();
-	      break;
-	  }
-	};
+	// let checkLocation = function (str) {
+	//   switch (str){
+	//     case 'search':
+	//       searchAll(searchString);
+	//       break;
+	//     case 'untracked':
+	//       showUntracked();
+	//       break;
+	//     case 'unwatched':
+	//       showUnwatched();
+	//       break;
+	//     case 'watched':
+	//       showWatched();
+	//       break;
+	//     case 'favorites':
+	//       showFavorites();
+	//       break;
+	//   }
+	// };
 
 	let userLocation = function(str){
 	  location = str;
@@ -585,26 +599,26 @@
 
 	// search(input): use getUser() then call Firebase.searchFirebase(input) if applicable and OpenMovies.getMovies(input), save input, and call signIn something, then call compare(), renderMovies(object, search)
 	let searchAll = function(string){
+	  searchResultAll = {Search: []};
 	  location = 'search';
 	  OpenMovie.getMovies(string)
 	  .then((movieData) => {
+	console.log("searchAll called omdb with: ", string);
 	    resultOMDb = movieData;
-	  });
-	  searchString = string.toLowerCase();
-	  if (loggedUser()){
-	    // searchResultTracked = Firebase.searchFirebase(string);
-	    for (let i=0; i<userMovies.Search.length; i++){
-	      for (let title in userMovies.Search[i]){
-	        if (userMovies.Search[i].title.toLowerCase().contains(searchString)){
-	          searchResultTracked.Search.push(userMovies.Search[i]);
-	        }
+	    searchString = string.toLowerCase();
+	    if (loggedUser()){
+	      // searchResultTracked = Firebase.searchFirebase(string);
+	      for (let i=0; i<userMovies.Search.length; i++){
+	        // for (let title in userMovies.Search[i]){
+	          
+	        // }
 	      }
+	      searchResultAll = compare(resultOMDb, searchResultTracked);
+	    } else {
+	      searchResultAll = resultOMDb;
 	    }
-	    searchResultAll = compare(resultOMDb, searchResultTracked);
-	  } else {
-	    searchResultAll = resultOMDb;
-	  }
-	  Render.renderMovies(searchResultAll, "search");
+	    Render.renderMovies(searchResultAll, "search");
+	  });
 	};
 
 	// showUntracked() run compare and return only results that do not have firebase uid, then call renderMovies(object, untracked)
@@ -629,8 +643,9 @@
 	// showWatched() will call getWatched(true), then call renderMovies(object, watched)
 	let showWatched = () => {
 	  location = 'watched';
+	  getData
 	  let watched = {Search: []};
-	  userMovies.Search.forEach(function (el, ind, arr) {
+	  userMovies.Search.forEach(function (el) {
 	    if (el.watched){
 	      watched.Search.push(el);
 	    }
@@ -650,11 +665,8 @@
 	  Render.renderMovies(fave, "favorites");
 	};
 
-	// AddMovie(movieId) will call getFullMovie(imdbID), call Firebase.addMovie(object), call renderCard(object)
 	let addMovie = (movieId) => {
-
 	  console.log("addMovie function runs");
-
 	  OpenMovie.getFullMovies(movieId)
 	  .then(function(movieData){
 	    console.log("movieData in then of AddMovie:", movieData);
@@ -665,17 +677,14 @@
 	    "Watched" : false,
 	    "Rating" : 0,
 	    "Poster" : movieData.Poster,
-	    "imdbID" : movieData.imdbID
+	    "imdbID" : movieData.imdbID,
+	    "uid": User.getUser()
 	    };
-
 	    Firebase.addMovie(fullMovie);
-
 	  });
-
-
 	  Render.hideMovie(movieId);
-	  landingPage(loggedUser());
-	  checkLocation(location);
+	  // landingPage(loggedUser());
+	  // checkLocation(location);
 	  // Render.renderCard(fullMovie);
 	};
 
@@ -702,7 +711,7 @@
 	    "Watched" : true,
 	    "Rating" : rating,
 	    "Poster" : tempMovie.poster,
-	    "imdbID" : tempMovie.imdbID
+	    "imdbID" : tempMovie.imdbID   
 	  };
 	  Firebase.editMovie(fullMovie, movieId);
 	  let newMovie = Firebase.getMovie(movieId);
@@ -12400,7 +12409,7 @@
 		return new Promise(function(resolve, reject) {
 			$.ajax ({
 				url: `https://scrappy-eb326.firebaseio.com/movies/${movieId}.json`,
-				method: "DELETE"
+				type: "DELETE"
 			}).done(function() {
 				resolve();
 			});
@@ -13081,13 +13090,18 @@
 	      console.log("movies.Search:", movies.Search);
 	      let content = "";
 	      for (let i = 0; i < movies.Search.length; i++) {
+	        if (movies.Search[i].Poster === "N/A"){
+	         let content = "";
+	        }
+	        else{
 	        content += `
-	          <div id="movie-${movies.Search[i].imdbID}" class="movie col-sm-4 card">
-	            <a id="delete-${movies.Search[i].imdbID}" href="#">Delete Card</a><br/>
+	          <div id="${movies.Search[i].imdbID}" class="movie col-sm-4 card">
+	            <a class="deleteButton" id="delete-${movies.Search[i].imdbID}" href="#">Delete Card</a><br/>
 	            <img class="movieImage" src="${movies.Search[i].Poster}"/><br/>
-	            <a id="add-${movies.Search[i].imdbID}">Add to Watchlist</a>
+	            <button type="button" class="adder" id="add-${movies.Search[i].imdbID}">Add to Watchlist</a>
 	          </div>
 	        `;
+	      }
 
 	        // Event Listeners for each add button
 	        /*jshint loopfunc: true */
@@ -13207,7 +13221,9 @@
 
 
 	// hideMovie(movieID)
-	let hideMovie = () => "I hide a movie";
+	function hideMovie(movie){
+	  $(movie).remove();
+	}
 
 	// Testing
 	let viewTestFunction = () => "I was created in the View";

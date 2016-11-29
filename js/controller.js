@@ -4,6 +4,7 @@
 let fav = require("./favicon");
 let sass = require("../sass/style.scss");
 let model = require("./model");
+let view = require("./view");
 
         // Input Elements
 let navSearch   = $("#nav-Search"), //keypress event
@@ -39,6 +40,18 @@ navSearch.val('');
 }   
 });
 
+$(document).on("click" , ".adder" , function(event){
+	if(event.target.className === "adder")
+		console.log("Drewwwwww" , event.target.parentElement.id);
+		model.addMovie(event.target.parentElement.id);
+		$(event.target.closest('div')).hide();
+});
+
+$(document).on("click" , ".deleteButton" , function(event){
+	if(event.target.className === "deleteButton")
+		console.log("Drewwwwww" , event.target.parentElement.id);
+		model.deleteMovie(event.target.parentElement.id);
+});
 
 //listening to 4 toggle options
 showUntracked.click(function(event) {
@@ -47,7 +60,7 @@ model.showUntracked();
 });
 
 showUnwatched.click(function(event) {
-console.log("you clicked show unwatched",event );
+console.log("you clicked show unwatched", event );
 
 model.showUnwatched();
 });
@@ -62,6 +75,7 @@ console.log("click event for showFavorites",event );
 
 model.showFavorites();
 });
+
 
 
 
